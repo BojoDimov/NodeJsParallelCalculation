@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "suppressExcessPropertyErrors": true,
+		"typeRoots": [ "node_modules/@types" ]
+  },
+	"include": [
+		"./src/**/*.ts"
+	]
+}

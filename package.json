@@ -1,0 +1,23 @@
+{
+  "name": "node-parallel",
+  "version": "1.0.0",
+  "description": "framework for parallel calculation on nodeJs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BojoDimov/NodeJsParallelCalculation.git"
+  },
+  "author": "BozhidarDimov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BojoDimov/NodeJsParallelCalculation/issues"
+  },
+  "homepage": "https://github.com/BojoDimov/NodeJsParallelCalculation#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.1.5",
+    "typescript": "^2.2.1"
+  },
+  "dependencies": {
+    "@types/node": "^7.0.8"
+  }
+}
