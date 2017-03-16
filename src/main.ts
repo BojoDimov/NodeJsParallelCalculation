@@ -4,7 +4,7 @@ import { Timer } from './timer';
 function main(){
 	let ctx = new CalculationContext();
 
-	ctx.start('./build/helloWorld.js', 4);
+	ctx.start('./build/helloWorld.js', 80, (id:number) => { return { id: id }});
 
 }
 

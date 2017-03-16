@@ -28,8 +28,8 @@ export class CalculationContext {
 		this.timer = new Timer();
 		this.stateEmitter = new EventEmitter();
 		this.logicalCores = cpus().length;
-		for (let i = 0; i < this.logicalCores*4; i++) {
-			this.workers[i] = new WorkerProcess(this.stateEmitter, this.contextMemory, this.timer);
+		for (let i = 0; i < this.logicalCores * 4; i++) {
+			//this.workers[i] = new WorkerProcess(this.stateEmitter, this.contextMemory, this.timer);
 		}
 
 		//this.stateEmitter.on('calcStart', this.onCalculationStartHandler);
@@ -46,36 +46,45 @@ export class CalculationContext {
 				if (element.state == WorkerState.working) {
 					isCalculationReady = false;
 				}
-				if(element.state == WorkerState.finished){
+				if (element.state == WorkerState.finished) {
 					element.state = WorkerState.idle;
 				}
 			});
 
 			if (isCalculationReady) {
-				let result = 0;
 				this.workers.forEach(element => {
-					if(element.calculationResult){
+					if (element.calculationResult) {
 						result += element.calculationResult;
 						element.calculationResult = undefined;
 					}
-				})
+				});
+
 				this.stateEmitter.emit(CalculationEvent.calculationComplete);
 				console.log('Result: ' + result + ' Time: ' + this.timer.getTime() + 'ms');
-			}
-
-			if (this.onWorkerCompleteHandler) {
-				this.onWorkerCompleteHandler(data);
 			}
 		})
 	}
 
-	start(modulePath: string, numProc: number) {
+	start(modulePath: string, numProc: number, dataGenerator?: (id?: number, input?: any) => void, input?: any) {
+		//timer init
 		this.timer.start();
-		this.timer.pause();
-		for (let i = 0; i < numProc; i++) {
-			this.workers[i].start(modulePath, i);
+
+		//create and call the workers
+		if (dataGenerator) {
+			for (let i = 0; i < numProc; i++) {
+				this.timer.pause();
+				this.workers[i] = new WorkerProcess(this.stateEmitter, this.contextMemory, this.timer);
+				this.workers[i].start(modulePath, dataGenerator(i, input));
+				this.timer.continue();
+			}
+		} else {
+			for (let i = 0; i < numProc; i++) {
+				this.timer.pause();
+				this.workers[i] = new WorkerProcess(this.stateEmitter, this.contextMemory, this.timer);
+				this.workers[i].start(modulePath);
+				this.timer.continue();
+			}
 		}
-		this.timer.continue();
 	}
 }
 
