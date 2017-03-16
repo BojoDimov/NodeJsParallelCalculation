@@ -12,7 +12,6 @@ export class WorkerProcess {
 
 	constructor(
 		private contextEmitter: EventEmitter,
-		private sharedMemory: object,
 		private timer: Timer
 	) { }
 
