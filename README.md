@@ -6,4 +6,4 @@ framework for parallel calculation on nodeJs
 3. gulp compile
 4. node ./build/main.js
 ### TODO:
-separate workerClass from the calculation logic
+add reconstruct logic for workers return value
