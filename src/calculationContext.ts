@@ -41,19 +41,26 @@ export class CalculationContext {
 
 		this.stateEmitter.on(CalculationEvent.workerComplete, (data) => {
 			let isCalculationReady = true;
+			let result = 0;
 			this.workers.forEach((element) => {
 				if (element.state == WorkerState.working) {
 					isCalculationReady = false;
 				}
 				if(element.state == WorkerState.finished){
-					console.log(element.calculationResult);
 					element.state = WorkerState.idle;
 				}
 			});
 
 			if (isCalculationReady) {
+				let result = 0;
+				this.workers.forEach(element => {
+					if(element.calculationResult){
+						result += element.calculationResult;
+						element.calculationResult = undefined;
+					}
+				})
 				this.stateEmitter.emit(CalculationEvent.calculationComplete);
-				console.log(this.timer.getTime() + 'ms');
+				console.log('Result: ' + result + ' Time: ' + this.timer.getTime() + 'ms');
 			}
 
 			if (this.onWorkerCompleteHandler) {
@@ -66,7 +73,7 @@ export class CalculationContext {
 		this.timer.start();
 		this.timer.pause();
 		for (let i = 0; i < numProc; i++) {
-			this.workers[i].start(modulePath, i + 1);
+			this.workers[i].start(modulePath, i);
 		}
 		this.timer.continue();
 	}

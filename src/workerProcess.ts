@@ -19,7 +19,8 @@ export class WorkerProcess {
 	}
 
 	start(modulePath: string, id: number) {
-		this._underlyingProcess = fork(modulePath, [id.toString()]);
+		let step = 2000000000;
+		this._underlyingProcess = fork(modulePath, [id.toString(), (id*step + 1).toString(), ((id+1)*step).toString()]);
 		this.state = WorkerState.working;
 		this._underlyingProcess.on('message', (data) => {
 			//console.log('worker ' + id + ' caught complete signal from uderlying process');
