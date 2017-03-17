@@ -4,8 +4,11 @@ import { Timer } from './timer';
 function main(){
 	let ctx = new CalculationContext();
 
-	ctx.start('./build/helloWorld.js', 80, (id:number) => { return { id: id }});
+	let emitter = ctx.start('./build/helloWorld.js', 8, (id:number) => { return { id: id }});
 
+	emitter.on('calcComplete', (data) => {
+		console.log(data)
+	});
 }
 
 main();
