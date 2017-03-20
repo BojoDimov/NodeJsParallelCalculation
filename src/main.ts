@@ -1,25 +1,19 @@
-import { CalculationContext } from './calculationContext';
+import { CalculationContext, GlobalParams } from './calculationContext';
 import { Timer } from './timer';
 
-function main(){
+function main() {
 	let ctx = new CalculationContext();
 
-	//let emitter = ctx.start('./build/helloWorld.js', 8, (id:number) => { return { id: id }});
-
-	let calculationEmitter = ctx.exec(HelloWorld, 8);
+	let calculationEmitter = ctx.exec(HelloWorld, 4, 1, 'neshto');
 
 	calculationEmitter.on('calcComplete', (data) => {
 		console.log(data)
 	});
 }
 
-function HelloWorld(global: GlobalParams){
-	console.log("Hello World from worker: " + global.workerId);
+function HelloWorld(global: GlobalParams, param1: number, param2: string) {
+	console.log("Hello World from worker: " + global.workerId + ' param1=' + param1 + ' param2=' + param2);
 }
 
-
-class GlobalParams{
-	workerId: number;
-}
 
 main();

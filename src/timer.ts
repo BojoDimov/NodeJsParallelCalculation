@@ -3,12 +3,13 @@ export class Timer {
 	private pauseStart: number = undefined;
 	private totalPausetime: number = 0;
 
-	public start() {
-		if (this.startTime) {
-			throw 'Timer is started';
-		}
+	public start():Timer {
+		// if (this.startTime) {
+		// 	throw 'Timer is started';
+		// }
 
 		this.startTime = new Date().getTime();
+		return this;
 	}
 
 	public pause(): number {

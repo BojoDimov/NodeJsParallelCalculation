@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 import { ChildProcess, fork } from 'child_process';
 
 import { CalculationEvent } from './calculationContext'
-import { Timer } from './timer'
 
 export class WorkerProcess {
 	state: WorkerState = WorkerState.idle;
@@ -13,8 +12,8 @@ export class WorkerProcess {
 
 	start(modulePath: string, dataInput?: any) {
 		this.state = WorkerState.working;
-
 		let _process = fork(modulePath);
+
 		_process.send(dataInput);
 
 		_process.on('message', (result) => {
@@ -33,13 +32,13 @@ export const enum WorkerState {
 };
 
 
-export function start(executable: (input?: any) => void) {
-	process.on('message', (data) => {
-		let result = executable(data);
-		if (result != null && result != undefined) {
-			process.send(result);
-		} else {
-			process.send(null);
-		}
-	})
-}
+// export function start(executable: (input?: any) => void) {
+// 	process.on('message', (data) => {
+// 		let result = executable(data);
+// 		if (result != null && result != undefined) {
+// 			process.send(result);
+// 		} else {
+// 			process.send(null);
+// 		}
+// 	})
+// }

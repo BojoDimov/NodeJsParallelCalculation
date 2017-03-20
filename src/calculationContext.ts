@@ -5,7 +5,6 @@ import { Timer } from './timer';
 
 export class CalculationContext {
 	workers: WorkerProcess[] = [];
-	timer: Timer;
 	stateEmitter: EventEmitter;
 
 	constructor() {
@@ -15,7 +14,6 @@ export class CalculationContext {
 	private init() {
 		console.log('initialization of calculation context');
 
-		this.timer = new Timer();
 		this.stateEmitter = new EventEmitter();
 
 		this.stateEmitter.on(CalculationEvent.workerComplete, () => this.workerCompleteHandler());
@@ -40,44 +38,57 @@ export class CalculationContext {
 			});
 
 			this.stateEmitter.emit(CalculationEvent.calculationComplete, results);
-			console.log('Time: ' + this.timer.getTime() + 'ms');
-			this.timer.pause();
+			//console.log('Time: ' + this.timer.getTime() + 'ms');
+			//this.timer.pause();
 		}
 	}
 
-	start(modulePath: string, numProc: number, dataGenerator?: (id?: number, input?: any) => void, input?: any): ListenerOnlyEventEmitter {
-		this.timer.start();
+	// start(modulePath: string, numProc: number, dataGenerator?: (id?: number, input?: any) => void, input?: any): ListenerOnlyEventEmitter {
+	// 	//this.timer.start();
 
-		//create and call the workers
-		if (dataGenerator) {
-			for (let i = 0; i < numProc; i++) {
-				this.timer.pause();
-				this.workers[i] = new WorkerProcess(this.stateEmitter);
-				this.workers[i].start(modulePath, dataGenerator(i, input));
-				this.timer.continue();
-			}
-		} else {
-			for (let i = 0; i < numProc; i++) {
-				this.timer.pause();
-				this.workers[i] = new WorkerProcess(this.stateEmitter);
-				this.workers[i].start(modulePath);
-				this.timer.continue();
-			}
-		}
+	// 	//create and call the workers
+	// 	if (dataGenerator) {
+	// 		for (let i = 0; i < numProc; i++) {
+	// 			//this.timer.pause();
+	// 			this.workers[i] = new WorkerProcess(this.stateEmitter);
+	// 			this.workers[i].start(modulePath, dataGenerator(i, input));
+	// 			//this.timer.continue();
+	// 		}
+	// 	} else {
+	// 		for (let i = 0; i < numProc; i++) {
+	// 			//this.timer.pause();
+	// 			this.workers[i] = new WorkerProcess(this.stateEmitter);
+	// 			this.workers[i].start(modulePath);
+	// 			//this.timer.continue();
+	// 		}
+	// 	}
 
-		return new ListenerOnlyEventEmitter(this.stateEmitter);
-	}
+	// 	return new ListenerOnlyEventEmitter(this.stateEmitter);
+	// }
 
 
-	exec(func: (...args) => void, threads: number, ...fargs): ListenerOnlyEventEmitter {
-		let executingContext = './build/execute.js';
-		this.timer.start();
+	exec(functionObject: (...args) => void, threads: number, ...functionArguments): CalculationInProcess {
+		let timer = new Timer().start();
+
 		for (let i = 0; i < threads; i++) {
+			let globalParams = <GlobalParams>{
+				workerId: i
+			};
+
+			functionArguments.unshift(globalParams)
+
+			let internalParams = <InternalParams>{
+				arguments: functionArguments,
+				function: functionObject.toString()
+			};
+
+
 			this.workers[i] = new WorkerProcess(this.stateEmitter);
-			this.workers[i].start(executingContext, { arguments: fargs, workerId: i, functionString:func.toString()});
+			this.workers[i].start(EXECUTION_CONTEXT, internalParams);
+			functionArguments.shift();
 		}
 
-		return new ListenerOnlyEventEmitter(this.stateEmitter);
+		return new CalculationInProcess(this.stateEmitter, timer);
 	}
 }
 
@@ -90,10 +101,28 @@ export class CalculationEvent {
 	static workerError: string = 'workerError';
 }
 
-export class ListenerOnlyEventEmitter {
-	constructor(private emitter: EventEmitter) { }
+export class CalculationInProcess {
+	constructor(private emitter: EventEmitter, private timer?: Timer) { }
 
 	on(event: 'calcComplete', calculationCompleteHandler: (data: any) => void) {
-		this.emitter.on(CalculationEvent.calculationComplete, (data) => calculationCompleteHandler(data));
+		let self = this;
+
+		this.emitter.on(CalculationEvent.calculationComplete, (data) => {
+			if (self.timer) {
+				console.log('Calculation took ' + self.timer.getTime() + 'ms');
+			}
+			return calculationCompleteHandler(data);
+		});
 	}
+}
+
+export class GlobalParams {
+	workerId: number;
+}
+
+export const EXECUTION_CONTEXT: string = './build/executable.js';
+
+export class InternalParams {
+	arguments: any[];
+	function: string;
 }
