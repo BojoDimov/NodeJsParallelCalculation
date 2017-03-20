@@ -67,6 +67,18 @@ export class CalculationContext {
 
 		return new ListenerOnlyEventEmitter(this.stateEmitter);
 	}
+
+
+	exec(func: (...args) => void, threads: number, ...fargs): ListenerOnlyEventEmitter {
+		let executingContext = './build/execute.js';
+		this.timer.start();
+		for (let i = 0; i < threads; i++) {
+			this.workers[i] = new WorkerProcess(this.stateEmitter);
+			this.workers[i].start(executingContext, { arguments: fargs, workerId: i, functionString:func.toString()});
+		}
+
+		return new ListenerOnlyEventEmitter(this.stateEmitter);
+	}
 }
 
 export class CalculationEvent {
@@ -78,10 +90,10 @@ export class CalculationEvent {
 	static workerError: string = 'workerError';
 }
 
-export class ListenerOnlyEventEmitter{
-	constructor(private emitter: EventEmitter){ }
+export class ListenerOnlyEventEmitter {
+	constructor(private emitter: EventEmitter) { }
 
-	on(event: 'calcComplete', calculationCompleteHandler: (data: any) => void){
+	on(event: 'calcComplete', calculationCompleteHandler: (data: any) => void) {
 		this.emitter.on(CalculationEvent.calculationComplete, (data) => calculationCompleteHandler(data));
 	}
 }
