@@ -15,12 +15,16 @@
   "scripts": {
     "clean": "rimraf ./build",
     "build": "npm run clean && tsc -b",
-    "start": ""
+    "start.server": "node ./build/server",
+    "benchmark": "./tools/ab -n 100000 -c 8 \"http://127.0.0.1:4000/\""
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.12.7",
     "rimraf": "^5.0.5",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "axios": "^1.6.8"
   }
 }
