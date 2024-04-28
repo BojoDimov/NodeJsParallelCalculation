@@ -1,15 +1,9 @@
 {
+	"extends": "@tsconfig/node20/tsconfig.json",
 	"compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noImplicitAny": false,
-    "skipLibCheck": true,
-    "suppressExcessPropertyErrors": true,
-		"typeRoots": [ "node_modules/@types" ]
-  },
+		"strict": false,
+		"outDir": "build"
+	},
 	"include": [
 		"./src/**/*.ts"
 	]

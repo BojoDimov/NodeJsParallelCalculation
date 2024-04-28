@@ -12,7 +12,7 @@ export class CalculationContext {
 	}
 
 	private init() {
-		console.log('initialization of calculation context');
+		console.log('Init context...');
 
 		this.stateEmitter = new EventEmitter();
 
