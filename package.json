@@ -13,11 +13,14 @@
   },
   "homepage": "https://github.com/BojoDimov/NodeJsParallelCalculation#readme",
   "scripts": {
-    "start": "tsc && node ./build/main.js"
+    "clean": "rimraf ./build",
+    "build": "npm run clean && tsc -b",
+    "start": ""
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.12.7",
+    "rimraf": "^5.0.5",
     "typescript": "^5.4.5"
   }
 }

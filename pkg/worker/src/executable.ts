@@ -3,7 +3,7 @@ import { Timer } from './timer';
 
 process.on('message', (params: InternalParams) => handleFunctionExecution(params));
 
-function handleFunctionExecution(params:InternalParams){
+function handleFunctionExecution(params: InternalParams) {
 	let f = new Function('return ' + params.function)();
 	let timer = new Timer().start();
 	let result = f.apply(null, params.arguments);

@@ -1,10 +1,14 @@
 {
-	"extends": "@tsconfig/node20/tsconfig.json",
-	"compilerOptions": {
-		"strict": false,
-		"outDir": "build"
-	},
-	"include": [
-		"./src/**/*.ts"
-	]
+  "references": [
+    {
+      "path": "./pkg/client"
+    },
+    {
+      "path": "./pkg/server"
+    },
+    {
+      "path": "./pkg/worker"
+    }
+  ],
+  "files": []
 }
